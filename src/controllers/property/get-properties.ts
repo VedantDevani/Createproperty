@@ -33,13 +33,13 @@ const getProperties = async (req: Request, res: Response) => {
       });
     }
 
-    let query: FilterQuery<IProperty> = { isDeleted: false };
+    let query: FilterQuery<IProperty> = { isDeleted: true };
 
     if (agentId && buyer_id) {
       query = {
         agentId: agentId as string,
         buyer_id: buyer_id as string,
-        isDeleted: false,
+        isDeleted: true,
       };
     } else {
       if (agentId) {
@@ -56,78 +56,16 @@ const getProperties = async (req: Request, res: Response) => {
 
     const skip = (pageNum - 1) * size;
 
-    // Fetch properties with populated nested details
+    console.log("Query:", query); // Log the constructed query
+
     const properties: IProperty[] = await PropertyModel.find(query)
       .sort({ created_at: -1 })
       .skip(skip)
-      .limit(size)
-      .select("-propertyImages -streetView -mapLocation") // Exclude large fields or unnecessary fields
-      .populate("agentId") // Populate agent details if needed
-      .exec();
+      .limit(size);
 
-    // Format the response to include nested details under specific sections
-    const formattedProperties = properties.map((property) => ({
-      _id: property._id,
-      agentId: property.agentId,
-      price: property.price,
-      isDeleted: property.isDeleted,
-      createdAt: property.createdAt,
-      category: property.category,
-      availableFor: property.availableFor,
-      listingId: property.listingId,
-      propertyDescription: property.propertyDescription,
-      generalDetails: {
-        price: property.generalDetails.price,
-        taxes: property.generalDetails.taxes,
-        address: property.generalDetails.address,
-        lotSize: property.generalDetails.lotSize,
-        directionsCrossStreets: property.generalDetails.directionsCrossStreets,
-      },
-      roomInterior: {
-        rooms: property.roomInterior.rooms,
-        roomsPlus: property.roomInterior.roomsPlus,
-        bedrooms: property.roomInterior.bedrooms,
-        bedroomsPlus: property.roomInterior.bedroomsPlus,
-        kitchens: property.roomInterior.kitchens,
-        familyRoom: property.roomInterior.familyRoom,
-        basement: property.roomInterior.basement,
-      },
-      exterior: {
-        propertyType: property.exterior.propertyType,
-        style: property.exterior.style,
-        exterior: property.exterior.exterior,
-        garageType: property.exterior.garageType,
-        driveParkingSpaces: property.exterior.driveParkingSpaces,
-        pool: property.exterior.pool,
-      },
-      utilities: {
-        fireplaceStove: property.utilities.fireplaceStove,
-        heatSource: property.utilities.heatSource,
-        heatType: property.utilities.heatType,
-        centralAirConditioning: property.utilities.centralAirConditioning,
-        laundryLevel: property.utilities.laundryLevel,
-        sewers: property.utilities.sewers,
-        water: property.utilities.water,
-      },
-      atAGlance: {
-        type: property.atAGlance.type,
-        area: property.atAGlance.area,
-        municipality: property.atAGlance.municipality,
-        neighbourhood: property.atAGlance.neighbourhood,
-        style: property.atAGlance.style,
-        lotSize: property.atAGlance.lotSize,
-        tax: property.atAGlance.tax,
-        beds: property.atAGlance.beds,
-        baths: property.atAGlance.baths,
-        fireplace: property.atAGlance.fireplace,
-        pool: property.atAGlance.pool,
-      },
-      __v: property.__v,
-    }));
+    console.log("Properties:", properties); // Log the fetched properties
 
-    console.log("Properties:", formattedProperties); // Log the formatted properties
-
-    return res.status(200).json({ status: true, data: formattedProperties });
+    return res.status(200).json({ status: true, data: properties });
   } catch (error) {
     console.error("Error getting properties:", error);
     return res.status(500).json({ status: false, message: "Internal server error" });
