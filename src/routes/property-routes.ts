@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.get("/:id", getPropertyById);
 router.get("/", getProperties);
-router.post("/", handleUploadAndValidation, createProperty);
+router.post("/",  createProperty);
 router.put("/:id", handleUploadAndValidation, updateProperty);
 router.delete("/:id", softDeleteProperty);
 

@@ -1,5 +1,6 @@
 import Joi from "joi";
 
+
 const generalDetailsSchema = Joi.object({
   price: Joi.string().required(),
   taxes: Joi.string().required(),
