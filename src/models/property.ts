@@ -52,7 +52,8 @@ interface AtAGlance {
 }
 
 export interface IProperty extends Document {
-  agentId: string;
+  agent_id: mongoose.Types.ObjectId;
+  // agentId: string;
   price: string;
   isDeleted: boolean;
   createdAt: Date;
@@ -71,7 +72,8 @@ export interface IProperty extends Document {
 }
 
 const PropertySchema: Schema = new Schema({
-  agentId: { type: String, required: true },
+  agent_id: { type: Schema.Types.ObjectId, ref: "Agent", required: true },
+  // agentId: { type: String, required: true },
   price: { type: String, required: true },
   isDeleted: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },

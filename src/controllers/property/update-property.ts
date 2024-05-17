@@ -1,16 +1,17 @@
 import { Request, Response } from "express";
-import Property from "../../models/property";
-// import { validateProperty } from "../../helpers/validation/property-validator";
-import path from "node:path";
-import fs from "node:fs";
+import Property, { IProperty } from "../../models/property";
+import { propertyValidationSchema } from "../../helpers/validation/property-validator";
+import path from "path";
+import fs from "fs";
 
 const updateProperty = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
 
-    const existingProperty = await Property.findOne({
+    // Find the existing property by ID and ensure it's not deleted
+    const existingProperty: IProperty | null = await Property.findOne({
       _id: id,
-      is_deleted: false,
+      isDeleted: false,
     });
 
     if (!existingProperty) {
@@ -21,41 +22,42 @@ const updateProperty = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const { error } = validateProperty(req.body);
+    // Validate the incoming request data
+    const { error } = propertyValidationSchema.validate(req.body, { abortEarly: false });
     if (error) {
-      res
-        .status(400)
-        .json({ status: false, message: error.details[0].message });
+      res.status(400).json({
+        status: false,
+        message: error.details.map((detail) => detail.message).join(', ')
+      });
       return;
     }
 
-   const { property_images, ...updateData } = req.body;
-   existingProperty.set(updateData);
-   if (req.files?.length) {
-     const files = req.files as Express.Multer.File[];
-     const propertyImages: string[] = files.map(
-       (file: Express.Multer.File) => file.filename
-     );
-  //   existingProperty.property_images.forEach((imageUrl) => {
-  //     const imagePath = path.join(__dirname, "../../../images", imageUrl);
-  //     fs.unlink(imagePath, (err) => {
-  //       if (err) console.log(err);
-  //       else {
-  //         console.log(`\nDeleted file: ${imagePath}`);
-  //       }
-  //     });
-  //   });
-  //   existingProperty.property_images = propertyImages;
-  // }
+    // Extract image URLs from uploaded files
+    const files = req.files as Express.Multer.File[];
+    const imageUrls: string[] = files?.map((file: Express.Multer.File) => file.filename) || [];
 
-    const updatedProperty = await existingProperty.save();
+    // Update existing property data
+    const updateData: Partial<IProperty> = {
+      ...req.body,
+      propertyImages: imageUrls.length ? imageUrls : existingProperty.propertyImages, // Update images if new ones are uploaded
+    };
 
-    if (!updatedProperty) {
-      res
-        .status(500)
-        .json({ status: false, message: "Failed to update property" });
-      return;
+    // If new images are uploaded, delete old images
+    if (imageUrls.length) {
+      existingProperty.propertyImages.forEach((imageUrl) => {
+        const imagePath = path.join(__dirname, "../../../images", imageUrl);
+        fs.unlink(imagePath, (err) => {
+          if (err) console.log(err);
+          else console.log(`Deleted file: ${imagePath}`);
+        });
+      });
     }
+
+    // Update the existing property with new data
+    existingProperty.set(updateData);
+
+    // Save the updated property to the database
+    const updatedProperty: IProperty = await existingProperty.save();
 
     res.status(200).json({
       status: true,
