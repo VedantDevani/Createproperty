@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import Property, { IProperty } from "../../models/property";
-import { validateProperty } from "../../helpers/validation/property-validator";
+import Property from "../../models/property";
+// import { validateProperty } from "../../helpers/validation/property-validator";
 import path from "node:path";
 import fs from "node:fs";
 
@@ -8,7 +8,7 @@ const updateProperty = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
 
-    const existingProperty: IProperty | null = await Property.findOne({
+    const existingProperty = await Property.findOne({
       _id: id,
       is_deleted: false,
     });
@@ -36,19 +36,19 @@ const updateProperty = async (req: Request, res: Response): Promise<void> => {
      const propertyImages: string[] = files.map(
        (file: Express.Multer.File) => file.filename
      );
-     existingProperty.property_images.forEach((imageUrl) => {
-       const imagePath = path.join(__dirname, "../../../images", imageUrl);
-       fs.unlink(imagePath, (err) => {
-         if (err) console.log(err);
-         else {
-           console.log(`\nDeleted file: ${imagePath}`);
-         }
-       });
-     });
-     existingProperty.property_images = propertyImages;
-   }
+  //   existingProperty.property_images.forEach((imageUrl) => {
+  //     const imagePath = path.join(__dirname, "../../../images", imageUrl);
+  //     fs.unlink(imagePath, (err) => {
+  //       if (err) console.log(err);
+  //       else {
+  //         console.log(`\nDeleted file: ${imagePath}`);
+  //       }
+  //     });
+  //   });
+  //   existingProperty.property_images = propertyImages;
+  // }
 
-    const updatedProperty: IProperty = await existingProperty.save();
+    const updatedProperty = await existingProperty.save();
 
     if (!updatedProperty) {
       res
