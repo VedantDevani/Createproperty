@@ -1,28 +1,28 @@
-// src/config/passport.ts
-
+//@ts-nocheck
 import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-import mongoose from 'mongoose';
-import AgentModel from '../models/agent';
+import * as dotenv from 'dotenv';
+import AgentModel from '../models/agent'; // Make sure the path is correct
 
-const opts = {
+dotenv.config();
+
+const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.JWT_SECRET,
+  secretOrKey: process.env.JWT_SECRET_KEY!,
 };
 
-passport.use(
-  new JwtStrategy(opts, async (jwt_payload, done) => {
-    try {
-      const agent = await AgentModel.findById(jwt_payload.id);
-      if (agent) {
-        return done(null, agent);
-      } else {
-        return done(null, false);
-      }
-    } catch (err) {
-      return done(err, false);
+const jwtStrategy = new JwtStrategy(jwtOptions, async (payload: any, done: any) => {
+  try {
+    const agent = await AgentModel.findById(payload.id); // Ensure you're looking up by the correct field
+    if (agent) {
+      return done(null, agent);
     }
-  })
-);
+    return done(null, false);
+  } catch (error) {
+    return done(error, false);
+  }
+});
+
+passport.use(jwtStrategy);
 
 export default passport;

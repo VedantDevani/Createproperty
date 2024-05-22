@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import AgentModel from '../../models/agent';
-import Property, { IProperty } from "../../models/property";
+import Property from "../../models/property";
 
 // Register agent
 export const registerAgent = async (req: Request, res: Response): Promise<void> => {
@@ -88,31 +88,33 @@ export const registerAgent = async (req: Request, res: Response): Promise<void> 
         return;
       }
   
-      const propertyCount = await Property.countDocuments({ agentId: agent._id });
+      
   
       const payload = { id: agent._id };
       const token = jwt.sign(payload, process.env.JWT_SECRET as string, { expiresIn: '1h' });
   
-      res.status(200).json({ status: true, token, propertyCount });
+      res.status(200).json({ status: true, token });
     } catch (error) {
       console.error('Error logging in agent:', error);
       res.status(500).json({ status: false, message: 'Internal server error' });
     }
   };
   
-  // Get agent profile
+// Get Agent Details
 export const getAgentDetails = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const agent = await AgentModel.findById(req.user);
-      if (!agent) {
-        res.status(404).json({ status: false, message: 'Agent not found' });
-        return;
-      }
-  
-      res.status(200).json({ status: true, agent });
-    } catch (error) {
-      console.error('Error getting agent profile:', error);
-      res.status(500).json({ status: false, message: 'Internal server error' });
+  const agentId = req.params.id; 
+
+  try {
+    const agent = await AgentModel.findById(agentId);
+    if (!agent) {
+      res.status(404).json({ status: false, message: 'Agent not found' });
+      return;
     }
-  };
-  
+    const propertyCount = await Property.countDocuments({ agentId: agent._id });
+    res.status(200).json({ status: true, agent , propertyCount});
+  } catch (error) {
+    console.error('Error getting agent details:', error);
+    res.status(500).json({ status: false, message: 'Internal server error' });
+  }
+};
+
