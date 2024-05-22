@@ -1,25 +1,24 @@
 import express from "express";
 import * as dotenv from "dotenv";
-import propertyRoutes from "./routes/property-routes";
-// import agentBuyerPropertyRoutes from "./routes/agent-buyer-property-routes";
+ import propertyRoutes from "./routes/property-routes";
+import agentRoutes from "./routes/agent-routes"
 import { connectToDB } from "./config/db";
-// import passport from "./config/passport";
-// import { authMiddleware } from "./helpers/auth-helper";
-
+import passport from "passport";
+import { authMiddleware } from "./helpers/middleware/authMiddleware";
 const app = express();
 
 connectToDB();
 
 dotenv.config();
 
-// app.use(passport.initialize());
+app.use(passport.initialize());
 
 app.use(express.json());
 
 app.use("/images", express.static("images"));
 
-app.use("/api/property",  propertyRoutes);
-// app.use("/api/agent-buyer-property", authMiddleware, agentBuyerPropertyRoutes);
+app.use("/api/property", propertyRoutes);
+ app.use("/api/agent",authMiddleware, agentRoutes);
 
 const PORT = process.env.PORT || 3003;
 

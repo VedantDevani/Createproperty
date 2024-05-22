@@ -52,8 +52,7 @@ interface AtAGlance {
 }
 
 export interface IProperty extends Document {
-  agentId: string;
-  // agentId: string;
+  agentId: mongoose.Types.ObjectId;
   price: string;
   isDeleted: boolean;
   createdAt: Date;
@@ -72,8 +71,7 @@ export interface IProperty extends Document {
 }
 
 const PropertySchema: Schema = new Schema({
-  agentId: { type: String, required: true },
-  // agentId: { type: String, required: true },
+  agentId: { type: mongoose.Types.ObjectId, ref: "Agent", required: true },
   price: { type: String, required: true },
   isDeleted: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
@@ -87,7 +85,7 @@ const PropertySchema: Schema = new Schema({
     taxes: { type: String, required: true },
     address: { type: String, required: true },
     lotSize: { type: String, required: true },
-    directionsCrossStreets: { type: String, required: true }
+    directionsCrossStreets: { type: String, required: true },
   },
   roomInterior: {
     rooms: { type: Number, required: true },
@@ -96,7 +94,7 @@ const PropertySchema: Schema = new Schema({
     bedroomsPlus: { type: Number, required: true },
     kitchens: { type: Number, required: true },
     familyRoom: { type: String, required: true },
-    basement: { type: String, required: true }
+    basement: { type: String, required: true },
   },
   exterior: {
     propertyType: { type: String, required: true },
@@ -104,7 +102,7 @@ const PropertySchema: Schema = new Schema({
     exterior: { type: String, required: true },
     garageType: { type: String, required: true },
     driveParkingSpaces: { type: Number, required: true },
-    pool: { type: String, required: true }
+    pool: { type: String, required: true },
   },
   utilities: {
     fireplaceStove: { type: String, required: true },
@@ -113,7 +111,7 @@ const PropertySchema: Schema = new Schema({
     centralAirConditioning: { type: String, required: true },
     laundryLevel: { type: String, required: true },
     sewers: { type: String, required: true },
-    water: { type: String, required: true }
+    water: { type: String, required: true },
   },
   atAGlance: {
     type: { type: String, required: true },
@@ -126,7 +124,7 @@ const PropertySchema: Schema = new Schema({
     beds: { type: Number, required: true },
     baths: { type: Number, required: true },
     fireplace: { type: String, required: true },
-    pool: { type: String, required: true }
+    pool: { type: String, required: true },
   },
   streetView: { type: String, required: true },
   mapLocation: { type: String, required: true },

@@ -1,29 +1,28 @@
-// import passport from "passport";
-// import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
-// import * as dotenv from "dotenv";
-// import { getDataByCollectionName } from "../helpers/validation/auth-validator";
-// 
-// dotenv.config();
-// 
-// const jwtSecret = process.env.JWT_SECRET_KEY!;
-// 
-// const jwtOptions = {
-//   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-//   secretOrKey: jwtSecret,
-// };
-// 
-// const jwtStrategy = new JwtStrategy(jwtOptions, async (payload: any, done) => {
-//   try {
-//     const user = await getDataByCollectionName("users", payload.userId);
-//     if (user) {
-//       return done(null, user);
-//     }
-//     return done(null, false);
-//   } catch (error) {
-//     return done(error, false);
-//   }
-// });
+// src/config/passport.ts
 
-// passport.use(jwtStrategy);
+import passport from 'passport';
+import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
+import mongoose from 'mongoose';
+import AgentModel from '../models/agent';
 
-// export default passport;
+const opts = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.JWT_SECRET,
+};
+
+passport.use(
+  new JwtStrategy(opts, async (jwt_payload, done) => {
+    try {
+      const agent = await AgentModel.findById(jwt_payload.id);
+      if (agent) {
+        return done(null, agent);
+      } else {
+        return done(null, false);
+      }
+    } catch (err) {
+      return done(err, false);
+    }
+  })
+);
+
+export default passport;
