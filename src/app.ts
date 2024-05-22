@@ -1,10 +1,10 @@
 import express from "express";
 import * as dotenv from "dotenv";
- import propertyRoutes from "./routes/property-routes";
-import agentRoutes from "./routes/agent-routes"
+import propertyRoutes from "./routes/property-routes";
+import agentRoutes from "./routes/agent-routes";
 import { connectToDB } from "./config/db";
 import passport from "passport";
-// import { authMiddleware } from "./helpers/middleware/authMiddleware";
+// import { authMiddleware } from "./helpers/validation/auth-helper";
 const app = express();
 
 connectToDB();
@@ -18,7 +18,7 @@ app.use(express.json());
 app.use("/images", express.static("images"));
 
 app.use("/api/property", propertyRoutes);
- app.use("/api/agent", agentRoutes);
+app.use("/api/agent", agentRoutes);
 
 const PORT = process.env.PORT || 3003;
 
