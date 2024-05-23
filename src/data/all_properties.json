@@ -229,67 +229,6 @@
       "fireplace": "Y",
       "pool": "None"
     },
-    "_id": "664efe98b4e7b1a4289a3546",
-    "agentId": "664d86c2c50a80888a4f5fc5",
-    "price": "$766,900",
-    "isDeleted": false,
-    "createdAt": "2024-05-23T08:30:16.244Z",
-    "category": "featured",
-    "availableFor": "For sale",
-    "listingId": "S8208904",
-    "propertyDescription": "Welcome to your new home on 24 Marion Crescent! Step inside and discover the inviting warmth of this charming raised bungalow, situated on a tranquil street with fantastic neighbours. Quality finishes and thoughtful upgrades await you at every turn, promising a comfortable and stylish living experience. As you enter, you'll be greeted by the timeless beauty of hardwood and ceramic flooring, welcoming you to explore further. Your renovated custom kitchen beckons, offering practical granite countertops and a convenient island that invite you to unleash your inner chef. Whether it's preparing meals for loved ones or entertaining guests, this kitchen is sure to become your favourite space. The flexible layout accommodates your needs effortlessly, with a formal dining area that easily converts into a third bedroom as you desire. Relax and unwind in the cozy living room, where you can create cherished memories with family and friends. The main floor also consists of two well-appointed bedrooms and an updated bath provide the perfect retreat after a long day. The finished basement has additional living space, featuring a cozy recreation room complete with a gas fireplace. An extra bedroom and three-piece bath on this level ensure comfort and convenience for you and your guests. The separate side entry provides privacy and convenience with potential for in-law capabilities. Outside, the landscaped yard beckons you to enjoy the serenity of outdoor living with a large deck and shed for all of your toys. With a total area of 1,680 square feet, there's plenty of room for you to spread out and make this home truly yours. Don't miss this opportunity to make cherished memories in your new home!",
-    "propertyImages": [],
-    "streetView": "https://www.google.com/maps/@44.4038646,-79.6797944,3a,75y,321.19h,96.61t/data=!3m6!1e1!3m4!1stX8yi7QRN3QXyYyXzWfhIA!2e0!7i16384!8i8192?entry=ttu",
-    "mapLocation": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2850.4102008423047!2d-79.68210002389915!3d44.40422767107648!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x882aa31661ad4d77%3A0x7eb874386b93e818!2s24%20Marion%20Crescent%2C%20Barrie%2C%20ON%20L4M%202R1%2C%20Canada!5e0!3m2!1sen!2sin!4v1715767249376!5m2!1sen!2sin",
-    "__v": 0
-  },
-  {
-    "generalDetails": {
-      "price": "$769,900",
-      "taxes": "$4170.50",
-      "address": "24 Marion Cres , Barrie, L4M 2L3, Ontario",
-      "lotSize": "56.00 x 125.00 (Feet)",
-      "directionsCrossStreets": "St.Vincent/Marion Crescent"
-    },
-    "roomInterior": {
-      "rooms": 5,
-      "roomsPlus": 2,
-      "bedrooms": 2,
-      "bedroomsPlus": 1,
-      "kitchens": 1,
-      "familyRoom": "Y",
-      "basement": "Finished, Sep Entrance"
-    },
-    "exterior": {
-      "propertyType": "Detached",
-      "style": "Bungalow-Raised",
-      "exterior": "Brick",
-      "garageType": "Attached",
-      "driveParkingSpaces": 2,
-      "pool": "None"
-    },
-    "utilities": {
-      "fireplaceStove": "Y",
-      "heatSource": "Gas",
-      "heatType": "Forced Air",
-      "centralAirConditioning": "Central Air",
-      "laundryLevel": "Lower",
-      "sewers": "Sewers",
-      "water": "Municipal"
-    },
-    "atAGlance": {
-      "type": "Freehold - Detached",
-      "area": "Simcoe",
-      "municipality": "Barrie",
-      "neighbourhood": "Wellington",
-      "style": "Bungalow-Raised",
-      "lotSize": "56.00 x 125.00(Feet)",
-      "tax": "$4,170.5",
-      "beds": 3,
-      "baths": 2,
-      "fireplace": "Y",
-      "pool": "None"
-    },
     "_id": "664efefbb4e7b1a4289a354a",
     "agentId": "664d8af7874e2319f25d94ee",
     "price": "$766,900",

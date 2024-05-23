@@ -8,21 +8,17 @@ const getProperties = async (req: Request, res: Response) => {
   try {
     const { agentId, page, page_size } = req.query;
 
-    if (
-      agentId &&
-      typeof agentId === "string" &&
-      (!isValidObjectId(agentId) || !(await validateAgentRegistration(agentId)))
-    ) {
-      return res.status(400).json({
-        status: false,
-        message: "Invalid Agent ID or Agent not found with given ID",
-      });
-    }
-
     let query: FilterQuery<IProperty> = { isDeleted: false };
 
-    if (agentId) {
-      query.agentId = agentId as string;
+    // If agentId is provided and valid, add it to the query
+    if (agentId && typeof agentId === "string") {
+      if (!isValidObjectId(agentId) || !(await validateAgentRegistration(agentId))) {
+        return res.status(400).json({
+          status: false,
+          message: "Invalid Agent ID or Agent not found with given ID",
+        });
+      }
+      query.agentId = agentId;
     }
 
     const pageNum = parseInt(page as string) || 1;
@@ -45,14 +41,13 @@ const getProperties = async (req: Request, res: Response) => {
     return res.status(200).json({
       status: true,
       data: properties,
-      // page: pageNum,
-      // pageSize: size,
-       totalCount,
-      // totalPages: Math.ceil(totalCount / size),
+      totalCount,
     });
   } catch (error) {
     console.error("Error getting properties:", error);
-    return res.status(500).json({ status: false, message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ status: false, message: "Internal server error" });
   }
 };
 
