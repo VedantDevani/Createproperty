@@ -110,37 +110,45 @@ export const loginAgent = async (
   }
 };
 
-// Get Agent Details
-export const getAgentDetails = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+
+
+// Get properties by agent
+export const getPropertiesByAgent = async (req: Request, res: Response): Promise<void> => {
   const agentId = req.params.id;
 
   try {
+    // Log the received agentId
+    console.log("Fetching properties for agentId:", agentId);
+
     const agent = await AgentModel.findById(agentId);
     if (!agent) {
       res.status(404).json({ status: false, message: "Agent not found" });
       return;
     }
+
     const propertyCount = await Property.countDocuments({ agentId: agent._id });
-    res.status(200).json({ status: true, agent, propertyCount });
+    const properties = await Property.find({ agentId });
+
+    res.status(200).json({ status: true, agent, propertyCount, properties });
   } catch (error) {
-    console.error("Error getting agent details:", error);
+    console.error("Error getting properties by agent:", error);
     res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
 
 // Logout agent
-export const LogoutAgent = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-
+export const LogoutAgent = async (req: Request, res: Response): Promise<void> => {
   try {
     res.status(200).json({ status: true, message: "Logout successful" });
   } catch (error) {
     console.error("Error logging out agent:", error);
     res.status(500).json({ status: false, message: "Internal server error" });
   }
+};
+
+export default {
+  registerAgent,
+  loginAgent,
+  getPropertiesByAgent,
+  LogoutAgent,
 };
