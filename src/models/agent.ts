@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-export interface AgentModel extends Document {
-  // id: string;
+export interface IAgent extends Document {
   fullName: string;
   email: string;
   phoneNumber: string;
@@ -26,7 +25,6 @@ export interface AgentModel extends Document {
 }
 
 const AgentSchema: Schema = new Schema({
- //  id: { type: String, required: true, unique: true },
   fullName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   phoneNumber: { type: String, required: true },
@@ -50,4 +48,4 @@ const AgentSchema: Schema = new Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.model<AgentModel>("Agent", AgentSchema);
+export default mongoose.model<IAgent>("Agent", AgentSchema);

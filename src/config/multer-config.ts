@@ -14,17 +14,17 @@ const imageStorage = multer.diskStorage({
 export const imageUpload: Multer = multer({
   storage: imageStorage,
   limits: {
-    fileSize: 1000000,
+    fileSize: 1000000,     // 1MB
   },
   fileFilter(_: Request, file: Express.Multer.File, cb: Function) {
-    if (!file.originalname.match(/\.(png|jpg)$/)) {
+    if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
       cb(true, undefined);
     }
     cb(undefined, true);
   },
 });
 
-export const uploadMiddleware = imageUpload.array("images", 4);
+export const uploadMiddleware = imageUpload.array("images", 40);
 
 export const handleUploadAndValidation = (
   req: Request,
@@ -39,7 +39,7 @@ export const handleUploadAndValidation = (
     if (err) {
       return res.status(400).json({
         status: false,
-        message: "Please upload an image in PNG or JPG format",
+        message: "Please upload an image in PNG or JPG or JPEG format",
       });
     }
 

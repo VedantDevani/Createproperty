@@ -1,21 +1,31 @@
-//@ts-nocheck
-import passport from 'passport';
-import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-import * as dotenv from 'dotenv';
-import AgentModel from '../models/agent'; // Make sure the path is correct
+import passport from "passport";
+import { Strategy } from "passport-jwt";
+import * as dotenv from "dotenv";
+import AgentModel from "../models/agent";
+import { Request } from 'express';
 
 dotenv.config();
 
-const jwtOptions = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.JWT_SECRET_KEY!,
+const cookieExtractor = (req: Request) => {
+  let token = null;
+  if (req && req.cookies) {
+    token = req.cookies['jwt'];
+  }
+  return token;
 };
 
-const jwtStrategy = new JwtStrategy(jwtOptions, async (payload: any, done: any) => {
+// Configure JWT Strategy options
+const jwtOptions = {
+  jwtFromRequest: cookieExtractor,
+  secretOrKey: process.env.JWT_SECRET! as string,
+};
+
+// Initialize and use the JwtStrategy
+const jwtStrategy = new Strategy(jwtOptions, async (payload: any, done) => {
   try {
-    const agent = await AgentModel.findById(payload.id); // Ensure you're looking up by the correct field
-    if (agent) {
-      return done(null, agent);
+    const user = await AgentModel.findById(payload.id);
+    if (user) {
+      return done(null, user);
     }
     return done(null, false);
   } catch (error) {

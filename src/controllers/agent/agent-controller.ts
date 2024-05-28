@@ -1,8 +1,8 @@
+//@ts-nocheck
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import mongoose from "mongoose";
-import AgentModel from "../../models/agent";
+import AgentModel, { IAgent } from "../../models/agent";
 import Property from "../../models/property";
 
 // Register agent
@@ -86,50 +86,56 @@ export const loginAgent = async (
   const { email, password } = req.body;
 
   try {
+    // Find agent by email
     const agent = await AgentModel.findOne({ email });
+
     if (!agent) {
-      res.status(401).json({ status: false, message: "Unauthorized" });
+      res
+        .status(401)
+        .json({ status: false, message: "Invalid email or password" });
       return;
     }
 
+    // Check if the password matches
     const isMatch = await bcrypt.compare(password, agent.password);
+
     if (!isMatch) {
-      res.status(401).json({ status: false, message: "Unauthorized" });
+      res
+        .status(401)
+        .json({ status: false, message: "Invalid email or password" });
       return;
     }
 
-    const payload = { id: agent._id };
-    const token = jwt.sign(payload, process.env.JWT_SECRET as string, {
-      expiresIn: "1h",
-    });
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: agent._id },
+      process.env.JWT_SECRET as string,
+      {
+        expiresIn: "1h",
+      }
+    );
 
-    res.status(200).json({ status: true, token });
+    res.cookie("jwt", token, { httpOnly: true, secure: true });
+    console.log(token);
+    return res.status(200).json({ status: true, message: 'Logged in successfully', token });
   } catch (error) {
-    console.error("Error logging in agent:", error);
-    res.status(500).json({ status: false, message: "Internal server error" });
+    res.status(500).json({ status: true, message: "Internal server error" });
   }
 };
 
-
-
 // Get properties by agent
-export const getPropertiesByAgent = async (req: Request, res: Response): Promise<void> => {
+export const getPropertiesByAgent = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const agentId = req.params.id;
 
   try {
-    // Log the received agentId
     console.log("Fetching properties for agentId:", agentId);
 
-    const agent = await AgentModel.findById(agentId);
-    if (!agent) {
-      res.status(404).json({ status: false, message: "Agent not found" });
-      return;
-    }
-
-    const propertyCount = await Property.countDocuments({ agentId: agent._id });
     const properties = await Property.find({ agentId });
 
-    res.status(200).json({ status: true, agent, propertyCount, properties });
+    res.status(200).json({ status: true, properties });
   } catch (error) {
     console.error("Error getting properties by agent:", error);
     res.status(500).json({ status: false, message: "Internal server error" });
@@ -137,9 +143,13 @@ export const getPropertiesByAgent = async (req: Request, res: Response): Promise
 };
 
 // Logout agent
-export const LogoutAgent = async (req: Request, res: Response): Promise<void> => {
+export const LogoutAgent = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    res.status(200).json({ status: true, message: "Logout successful" });
+    res.clearCookie('jwt');
+  return res.status(200).json({ status: true, message: "Logout successful" });
   } catch (error) {
     console.error("Error logging out agent:", error);
     res.status(500).json({ status: false, message: "Internal server error" });
