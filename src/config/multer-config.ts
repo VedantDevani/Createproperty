@@ -14,7 +14,7 @@ const imageStorage = multer.diskStorage({
 export const imageUpload: Multer = multer({
   storage: imageStorage,
   limits: {
-    fileSize: 1000000,     // 1MB
+    fileSize: 10000000,     // 10MB
   },
   fileFilter(_: Request, file: Express.Multer.File, cb: Function) {
     if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {

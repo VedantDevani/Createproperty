@@ -124,18 +124,23 @@ export const loginAgent = async (
 };
 
 // Get properties by agent
-export const getPropertiesByAgent = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const getPropertiesByAgent = async (req: Request, res: Response): Promise<void> => {
   const agentId = req.params.id;
 
   try {
+    // Log the received agentId
     console.log("Fetching properties for agentId:", agentId);
 
+    const agent = await AgentModel.findById(agentId);
+    if (!agent) {
+      res.status(404).json({ status: false, message: "Agent not found" });
+      return;
+    }
+
+    const propertyCount = await Property.countDocuments({ agentId: agent._id });
     const properties = await Property.find({ agentId });
 
-    res.status(200).json({ status: true, properties });
+    res.status(200).json({ status: true, agent, propertyCount, properties });
   } catch (error) {
     console.error("Error getting properties by agent:", error);
     res.status(500).json({ status: false, message: "Internal server error" });

@@ -17,9 +17,13 @@ router.post("/:id/logout", authMiddleware, LogoutAgent);
 // Protected routes that require authentication with JWT
 router.get(
   "/:id",
-   passport.authenticate("jwt", { session: false }),
+  passport.authenticate("jwt", { session: false }),
   getPropertiesByAgent
 );
+
+// Routes for Google Authentication
+
+
 router.get(
   "/protected",
   passport.authenticate("jwt", { session: false }),
@@ -27,5 +31,6 @@ router.get(
     res.status(200).json({ status: true, message: "Protected route accessed" });
   }
 );
+
 
 export default router;
