@@ -1,21 +1,22 @@
 import { Request, Response } from "express";
 import Property, { IProperty } from "../../models/property";
+import mongoose from "mongoose";
 
-const getPropertyById = async (req: Request, res: Response): Promise<void> => {
+export const getPropertyById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: 'Invalid ObjectId' });
+  }
+
   try {
-    const { id } = req.params;
-
-    const property: IProperty | null = await Property.findById(id);
-
+    const property = await Property.findById(id);
     if (!property) {
-      res.status(404).json({ status: false, message: "Property not found" });
-      return;
+      return res.status(404).json({ error: 'Property not found' });
     }
-
-    res.status(200).json({ status: true, data: property });
+    res.json(property);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ status: false, message: "Internal Server Error" });
+    res.status(500).json({ error: 'Server Error' });
   }
 };
 
