@@ -7,13 +7,15 @@ import {
   getPropertiesByAgent,
 } from "../controllers/agent/agent-controller";
 import passport from "passport";
+import { updateAgentProfile } from "../controllers/agent/updateAgentProfile";
 
 const router = express.Router();
 
 router.post("/register", registerAgent);
 router.post("/login", loginAgent);
 
-// Protected routes that require authentication with JWT
+router.put("/:id/profile", authMiddleware, updateAgentProfile);
+
 router.get(
   "/:id",
   passport.authenticate("jwt", { session: false }),

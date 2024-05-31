@@ -6,72 +6,32 @@ import AgentModel, { IAgent } from "../../models/agent";
 import Property from "../../models/property";
 
 // Register agent
-export const registerAgent = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  const {
-    fullName,
-    email,
-    phoneNumber,
-    password,
-    licenseNumber,
-    agencyName,
-    agencyAddress,
-    yearsOfExperience,
-    specializations,
-    profilePicture,
-    governmentID,
-    linkedInProfile,
-    website,
-    marketingPreferences,
-    preferredCommunicationChannels,
-    languagesSpoken,
-    serviceAreas,
-    professionalBio,
-    certificationsAwards,
-    references,
-  } = req.body;
+export const registerAgent = async (req: Request, res: Response): Promise<void> => {
+  const { fullName, email, password, phoneNumber, licenseNumber, governmentID, website, profilePicture } = req.body;
 
   try {
     let agent = await AgentModel.findOne({ email });
     if (agent) {
-      res
-        .status(400)
-        .json({ status: false, message: "Agent already registered" });
+      res.status(400).json({ status: false, message: "Agent already registered" });
       return;
     }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     agent = new AgentModel({
       fullName,
       email,
+      password: hashedPassword,
       phoneNumber,
-      password,
       licenseNumber,
-      agencyName,
-      agencyAddress,
-      yearsOfExperience,
-      specializations,
-      profilePicture,
       governmentID,
-      linkedInProfile,
       website,
-      marketingPreferences,
-      preferredCommunicationChannels,
-      languagesSpoken,
-      serviceAreas,
-      professionalBio,
-      certificationsAwards,
-      references,
+      profilePicture,
     });
 
-    const salt = await bcrypt.genSalt(10);
-    agent.password = await bcrypt.hash(password, salt);
-
     await agent.save();
-    res
-      .status(201)
-      .json({ status: true, message: "Agent registered successfully" });
+    res.status(201).json({ status: true, message: "Agent registered successfully" });
   } catch (error) {
     console.error("Error registering agent:", error);
     res.status(500).json({ status: false, message: "Internal server error" });

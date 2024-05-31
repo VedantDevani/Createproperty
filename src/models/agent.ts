@@ -28,7 +28,7 @@ export interface IAgent extends Document {
 
 const AgentSchema: Schema = new Schema({
   fullName: { type: String, required: true },
-  email: { type: String, required: true, unique: false },
+  email: { type: String, required: true, unique: true },
   phoneNumber: { type: String, required: false },
   password: { type: String, required: false },
   licenseNumber: { type: String, required: false },

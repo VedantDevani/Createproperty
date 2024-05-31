@@ -5,7 +5,7 @@ import path from "path";
 const imageStorage = multer.diskStorage({
   destination: "images",
   filename: function (_: Request, file: Express.Multer.File, cb: Function) {
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;  // Example output: "file-1623846492761-123456789.txt"
     const ext = path.extname(file.originalname);
     cb(null, `image_${uniqueSuffix}${ext}`);
   },
