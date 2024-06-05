@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import Property, { IProperty } from "../../models/property";
 import mongoose from "mongoose";
 
-export const getPropertyById = async (req: Request, res: Response) => {
+ const getPropertyById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {

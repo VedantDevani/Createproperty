@@ -6,12 +6,15 @@ import { handleUploadAndValidation } from "../config/multer-config";
 import softDeleteProperty from "../controllers/property/delete-property";
 import getPropertyById from "../controllers/property/get-property-by-id";
 import getPropertyAndSave from "../controllers/property/getPropertiesAndSave";
+import getPropertyBy_Id from "../controllers/property/getPropertyBy_Id";
 
 import getAllPropertiesAndSave from "../controllers/property/getAllPropertiesAndSave";
 
 const router = express.Router();
+
 router.get("/save-all", getAllPropertiesAndSave); 
 router.get("/:id/save", getPropertyAndSave); 
+router.get('/:id', getPropertyBy_Id);
 router.get("/:id", getPropertyById); 
 router.put("/:id", handleUploadAndValidation, updateProperty); 
 router.delete("/:agentId/:id", softDeleteProperty); 

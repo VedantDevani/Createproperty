@@ -8,7 +8,6 @@ const updateProperty = async (req: Request, res: Response): Promise<void> => {
     try {
       const { id } = req.params;
   
-      // Find the existing property by ID and ensure it's not deleted
       const existingProperty: IProperty | null = await Property.findOne({
         _id: id,
         isDeleted: false,
@@ -22,7 +21,6 @@ const updateProperty = async (req: Request, res: Response): Promise<void> => {
         return;
       }
   
-      // Validate the incoming request data
       const { error } = propertyValidationSchema.validate(req.body, { abortEarly: false });
       if (error) {
         res.status(400).json({
@@ -32,17 +30,14 @@ const updateProperty = async (req: Request, res: Response): Promise<void> => {
         return;
       }
   
-      // Extract image URLs from uploaded files
       const files = req.files as Express.Multer.File[];
       const imageUrls: string[] = files?.map((file: Express.Multer.File) => file.filename) || [];
   
-      // Update existing property data
       const updateData: Partial<IProperty> = {
         ...req.body,
-        propertyImages: imageUrls.length ? imageUrls : existingProperty.propertyImages, // Update images if new ones are uploaded
+        propertyImages: imageUrls.length ? imageUrls : existingProperty.propertyImages, 
       };
   
-      // If new images are uploaded, delete old images
       if (imageUrls.length) {
         existingProperty.propertyImages.forEach((imageUrl) => {
           const imagePath = path.join(__dirname, "../../../images", imageUrl);
@@ -53,12 +48,32 @@ const updateProperty = async (req: Request, res: Response): Promise<void> => {
         });
       }
   
-      // Update the existing property with new data
       existingProperty.set(updateData);
   
-      // Save the updated property to the database
       const updatedProperty: IProperty = await existingProperty.save();
   
+    const propertiesDirPath = path.join(__dirname, "../../data");
+    const propertiesFilePath = path.join(propertiesDirPath, "properties.json");
+
+    if (!fs.existsSync(propertiesDirPath)) {
+      fs.mkdirSync(propertiesDirPath, { recursive: true });
+    }
+
+    let properties: IProperty[] = [];
+    if (fs.existsSync(propertiesFilePath)) {
+      const data = fs.readFileSync(propertiesFilePath, "utf8");
+      properties = JSON.parse(data);
+    }
+
+    const propertyIndex = properties.findIndex(property => property?._id?.toString() === id);
+    if (propertyIndex !== -1) {
+      properties[propertyIndex] = updatedProperty.toObject();
+    } else {
+      properties.push(updatedProperty.toObject());
+    }
+
+    fs.writeFileSync(propertiesFilePath, JSON.stringify(properties, null, 2), "utf8");
+
       res.status(200).json({
         status: true,
         message: "Property updated successfully",

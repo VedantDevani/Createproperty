@@ -1,15 +1,35 @@
 import { Request, Response } from "express";
 import Property, { IProperty } from "../../models/property";
+import path from "path";
+import fs from "fs";
 
-const deleteProperty = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+const deleteProperty = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const propertiesDirPath = path.join(__dirname, "../../data");
+    const propertiesFilePath = path.join(propertiesDirPath, "properties.json");
+    const { id, agentId } = req.params; 
+    
+    const property: IProperty | null = await Property.findById(id);
 
-    // Find the property by ID and delete it
-    const deletedProperty: IProperty | null = await Property.findByIdAndDelete(id);
+    if (!property) {
+      res.status(404).json({
+        status: false,
+        message: "Property not found",
+      });
+      return;
+    }
+
+    if (property.agentId.toString() !== agentId) {
+      res.status(403).json({
+        status: false,
+        message: "Unauthorized: Agent ID does not match property's agent ID",
+      });
+      return;
+    }
+
+    const deletedProperty: IProperty | null = await Property.findByIdAndDelete(
+      id
+    );
 
     if (!deletedProperty) {
       res.status(404).json({
@@ -18,8 +38,20 @@ const deleteProperty = async (
       });
       return;
     }
+    if (!fs.existsSync(propertiesDirPath)) {
+      fs.mkdirSync(propertiesDirPath, { recursive: true });
+    }
 
-    // Respond with success message
+    let properties = [];
+    if (fs.existsSync(propertiesFilePath)) {
+      const data = fs.readFileSync(propertiesFilePath, 'utf8');
+      properties = JSON.parse(data);
+    }
+
+    properties = properties.filter((property: IProperty) => property?._id?.toString() !== id);
+
+    fs.writeFileSync(propertiesFilePath, JSON.stringify(properties, null, 2), 'utf8');
+
     res.status(200).json({
       status: true,
       message: "Property deleted successfully",
