@@ -39,7 +39,7 @@ app.use(express.static(path.join(__dirname, "client")));
 // Routes
 app.use("/api/agent", agentRoutes);
 app.use("/google", authgoogleRoutes);
-app.use('/facebook', authFacebookRoutes);
+app.use("/facebook", authFacebookRoutes);
 app.use("/api/property", authMiddleware, propertyRoutes);
 
 // Route for serving index.html

@@ -1,5 +1,5 @@
 import { authMiddleware } from "./../helpers/validation/auth-middleware";
-import express, { Request, Response, NextFunction } from "express";
+import express from "express";
 import {
   registerAgent,
   loginAgent,
@@ -8,6 +8,8 @@ import {
 } from "../controllers/agent/agent-controller";
 import passport from "passport";
 import { updateAgentProfile } from "../controllers/agent/updateAgentProfile";
+import { forgotPassword } from "../controllers/agent/forgot-password";
+import { resetPassword } from "../controllers/agent/resetPassword";
 
 const router = express.Router();
 
@@ -21,6 +23,8 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   getPropertiesByAgent
 );
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password', resetPassword);
 
 router.post("/:id/logout", authMiddleware, LogoutAgent);
 
