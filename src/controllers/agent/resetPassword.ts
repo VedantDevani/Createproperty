@@ -2,12 +2,13 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import Agent from "../../models/agent";
 import PasswordResetToken from "../../models/PasswordResetToken";
+import { validatePassword } from "../../helpers/passwordValidator";
 
 export const resetPassword = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { token, newPassword } = req.body;
+  const { token, NewPassword,confirmNewPassword } = req.body;
 
   try {
     const passwordResetToken = await PasswordResetToken.findOne({
@@ -20,6 +21,17 @@ export const resetPassword = async (
         .json({ status: false, message: "Invalid or expired token" });
       return;
     }
+
+    if (NewPassword !== confirmNewPassword) {
+      res.status(400).json({ status: false, message: "Passwords do not match" });
+      return;
+    }
+
+    if (!validatePassword(NewPassword)) {
+      res.status(400).json({ status: false, message: "Password must be 8-16 characters long, include at least one uppercase letter, one lowercase letter, one number, and one symbol (@, #, !, %, ^)" });
+      return;
+    }
+    
 
     if (passwordResetToken.used) {
       res.status(400).json({
@@ -50,17 +62,17 @@ export const resetPassword = async (
       return;
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await bcrypt.hash(NewPassword, 10);
 
     agent.password = hashedPassword;
     await agent.save();
 
-    passwordResetToken.used = true;
-    await passwordResetToken.save();
+   passwordResetToken.used = true;
+   await passwordResetToken.save();
 
-    res
-      .status(200)
-      .json({ status: true, message: "Password reset successfully" });
+   res
+    .status(200)
+   .json({ status: true, message: "Password reset successfully" });
   } catch (error) {
     console.error("Error resetting password:", error);
     res

@@ -13,7 +13,7 @@ import { resetPassword } from "../controllers/agent/resetPassword";
 
 const router = express.Router();
 
-router.post("/register", registerAgent);
+router.post("/register-agent", registerAgent);
 router.post("/login", loginAgent);
 
 router.put("/:id/profile", authMiddleware, updateAgentProfile);
@@ -23,8 +23,8 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   getPropertiesByAgent
 );
-router.post('/forgot-password', forgotPassword);
-router.post('/reset-password', resetPassword);
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password", resetPassword);
 
 router.post("/:id/logout", authMiddleware, LogoutAgent);
 

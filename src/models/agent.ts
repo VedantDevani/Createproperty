@@ -3,8 +3,9 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface IAgent extends Document {
   fullName: string;
   email: string;
-  phoneNumber: string;
+  phoneNumber: number;
   password: string;
+  id: string;
   licenseNumber: string;
   agencyName: string;
   agencyAddress: string;
@@ -29,26 +30,26 @@ export interface IAgent extends Document {
 const AgentSchema: Schema = new Schema({
   fullName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  phoneNumber: { type: String, required: false },
+  phoneNumber: { type: Number, required: false, validate: /^\d{10}$/ },
   password: { type: String, required: false },
-  licenseNumber: { type: String, required: false },
-  agencyName: { type: String, required: false },
-  agencyAddress: { type: String, required: false },
-  yearsOfExperience: { type: Number, required: false },
-  specializations: { type: [String], required: false },
+  licenseNumber: { type: String, default: "" },
+  agencyName: { type: String, default: ""},
+  agencyAddress: { type: String, default: "" },
+  yearsOfExperience: { type: Number, default: 0},
+  specializations: { type: [String], default: "" },
   profilePicture: { type: String },
-  governmentID: { type: String },
-  linkedInProfile: { type: String },
-  website: { type: String },
+  governmentID: { type: String,default: "" },
+  linkedInProfile: { type: String,default: "" },
+  website: { type: String,default: "" },
   googleId: { type: String },
-  facebookId:{type: String},
-  marketingPreferences: { type: Boolean, required: false },
-  preferredCommunicationChannels: { type: [String], required: false },
-  languagesSpoken: { type: [String], required: false },
-  serviceAreas: { type: [String], required: false },
-  professionalBio: { type: String, required: false },
-  certificationsAwards: { type: [String], required: false },
-  references: { type: [String], required: false },
+  facebookId: { type: String },
+  marketingPreferences: { type: Boolean, default: false},
+  preferredCommunicationChannels: { type: [String], default: "" },
+  languagesSpoken: { type: [String], default: "" },
+  serviceAreas: { type: [String],default: "" },
+  professionalBio: { type: String, default: "" },
+  certificationsAwards: { type: [String], default: "" },
+  references: { type: [String], default: "" },
   createdAt: { type: Date, default: Date.now },
 });
 

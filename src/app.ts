@@ -11,6 +11,7 @@ import authgoogleRoutes from "./routes/auth-google";
 import authFacebookRoutes from "./routes/auth-facebook";
 
 import { authMiddleware } from "./helpers/validation/auth-middleware";
+import { handleUploadAndValidation } from "./config/multer-config";
 
 dotenv.config();
 const app = express();
@@ -33,9 +34,10 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Static files
-app.use(express.static(path.join(__dirname, "client")));
+app.use(handleUploadAndValidation);
 
+// Static files
+app.use('/images', express.static(path.join(__dirname, 'images')));
 // Routes
 app.use("/api/agent", agentRoutes);
 app.use("/google", authgoogleRoutes);

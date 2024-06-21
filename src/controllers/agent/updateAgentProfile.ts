@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import bcrypt from "bcryptjs";
 import AgentModel from "../../models/agent";
 
 export const updateAgentProfile = async (
@@ -10,7 +9,6 @@ export const updateAgentProfile = async (
   const {
     fullName,
     email,
-    password,
     phoneNumber,
     licenseNumber,
     governmentID,
@@ -40,10 +38,6 @@ export const updateAgentProfile = async (
     // Update registration fields
     agent.fullName = fullName || agent.fullName;
     agent.email = email || agent.email;
-    if (password) {
-      const salt = await bcrypt.genSalt(10);
-      agent.password = await bcrypt.hash(password, salt);
-    }
     agent.phoneNumber = phoneNumber || agent.phoneNumber;
     agent.licenseNumber = licenseNumber || agent.licenseNumber;
     agent.governmentID = governmentID || agent.governmentID;

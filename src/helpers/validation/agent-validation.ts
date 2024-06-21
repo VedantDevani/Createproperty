@@ -2,7 +2,7 @@ import Joi from 'joi';
 
 export const validateAgentRegistration = (data: any) => {
   const schema = Joi.object({
-    id: Joi.string().required(),
+    agentId: Joi.string().required(),
     fullName: Joi.string().required(),
     email: Joi.string().email().required(),
     phoneNumber: Joi.string().required(),
